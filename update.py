@@ -26,7 +26,7 @@ def make_m3u():
     'skip_download': True,
     'noplaylist': True,
     'nocheckcertificate': True,
-    'cookiefile': 'youtube_cookies.txt', # यह लाइन जोड़ें
+    'google_service_account': 'service-account.json', # यह लाइन जोड़ें
 }
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=False)
@@ -51,4 +51,5 @@ def make_m3u():
 
 if __name__ == "__main__":
     make_m3u()
+
 
