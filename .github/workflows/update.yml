@@ -24,9 +24,9 @@ jobs:
         pip install yt-dlp
 
     - name: Save cookies
-      run: printf '%s' "$YT_COOKIES" > youtube_cookies.txt
+      run: printf '%s' "$YOUTUBE_COOKIES" > youtube_cookies.txt
       env:
-        YT_COOKIES: ${{ secrets.YT_COOKIES }}
+        YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
 
     - name: Run script
       run: python update.py
