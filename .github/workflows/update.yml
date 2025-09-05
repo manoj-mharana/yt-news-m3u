@@ -4,7 +4,7 @@ name: Update M3U Playlist
 
 on:
   schedule:
-    - cron: '0 0,12 * * *' # हर 12 घंटे में चलेगा
+    - cron: '0 0,3 * * *' # दिन में दो बार
   workflow_dispatch:
 
 jobs:
@@ -28,8 +28,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install yt-dlp
 
-      - name: Create Service Account key file
-        run: printf '%s' "${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}" > service-account.json
+      - name: Create cookie file
+        run: printf '%s' "${{ secrets.YOUTUBE_COOKIES }}" > youtube_cookies.txt
 
       - name: Run script to update playlist
         run: python update.py
