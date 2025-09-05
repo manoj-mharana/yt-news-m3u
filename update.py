@@ -22,13 +22,12 @@ def make_m3u():
 
             try:
                 ydl_opts = {
-                    "quiet": True,
-                    "no_warnings": True,
-                    "cookies": COOKIE_FILE,
-                    "skip_download": True,
-                    "format": "best[ext=mp4][protocol^=http]/best",
-                }
-
+    'quiet': True,
+    'skip_download': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'cookiefile': 'youtube_cookies.txt', # यह लाइन जोड़ें
+}
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     info = ydl.extract_info(url, download=False)
                     if "url" in info:
@@ -52,3 +51,4 @@ def make_m3u():
 
 if __name__ == "__main__":
     make_m3u()
+
