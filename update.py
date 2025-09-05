@@ -1,86 +1,57 @@
-import csv
-import datetime
-from yt_dlp import YoutubeDL
+name: Update YouTube Live M3U
 
-INPUT = 'channels.csv'
-OUTPUT = 'news.m3u'
+on:
+  schedule:
+    - cron: '0 */3 * * *'  # हर 3 घंटे में auto run (UTC time)
+  workflow_dispatch:        # Manual run option
 
-HEADER = '#EXTM3U\n'
+permissions:
+  contents: write
 
-ydl_opts = {
-    'quiet': True,
-    'skip_download': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-def pick_best_m3u8(formats):
-    if not formats:
-        return None
-    m3u8_list = [f for f in formats if 'm3u8' in (f.get('protocol') or '') or 'm3u8' in (f.get('ext') or '')]
-    if not m3u8_list:
-        return None
-    # Highest bitrate first
-    m3u8_list.sort(key=lambda f: (f.get('tbr') or 0), reverse=True)
-    return m3u8_list[0].get('url')
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-def extract_stream(url):
-    with YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        # If /live jumps to an actual video, follow that URL once
-        if info.get('_type') == 'url' and info.get('url'):
-            info = ydl.extract_info(info['url'], download=False)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yt-dlp
 
-        # Only include if it's live right now
-        if info.get('is_live') is not True:
-            return None, None
+      - name: Write YouTube cookies file
+        env:
+          YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+        run: |
+          printf '%s' "$YT_COOKIES" > youtube_cookies.txt
+          # सिर्फ size check, content कभी print नहीं करना
+          ls -lh youtube_cookies.txt
 
-        title = info.get('title') or 'YouTube Live'
-        # Prefer m3u8 formats
-        m3u8 = pick_best_m3u8(info.get('formats'))
-        if m3u8:
-            return m3u8, title
-        # Fallback (rare)
-        return info.get('url'), title
+      - name: Generate playlist
+        run: |
+          python update.py
 
-def build_m3u(rows):
-    lines = []
-    lines.append(HEADER)
-    lines.append(f'# Generated UTC: {datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")}')
-    for r in rows:
-        name = (r.get('name') or '').strip()
-        url = (r.get('url') or '').strip()
-        logo = (r.get('logo') or '').strip()
-        group = (r.get('group') or 'YouTube News').strip()
-        if not name or not url:
-            continue
-        try:
-            stream, title = extract_stream(url)
-            if not stream:
-                print(f'[skip] Not live now: {name}')
-                continue
-            attrs = []
-            if logo:
-                attrs.append(f'tvg-logo="{logo}"')
-            attrs.append(f'group-title="{group}"')
-            attr_str = (' ' + ' '.join(attrs)) if attrs else ''
-            lines.append(f'#EXTINF:-1{attr_str},{name}')
-            lines.append(stream)
-            print(f'[ok] {name}')
-        except Exception as e:
-            print(f'[err] {name}: {e}')
-            continue
-    return '\n'.join(lines) + '\n'
-
-def main():
-    rows = []
-    with open(INPUT, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            rows.append(row)
-    m3u = build_m3u(rows)
-    with open(OUTPUT, 'w', encoding='utf-8') as f:
-        f.write(m3u)
-
-if __name__ == '__main__':
-    main()
+      - name: Commit and push news.m3u only (safe overwrite)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # ensure cookie file कभी commit न हो
+          git rm -f --ignore-unmatch youtube_cookies.txt || true
+          # सिर्फ playlist file stage करो
+          git add -f news.m3u
+          # अगर कोई change नहीं है तो exit
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')"
+          # force push ताकि conflict ना हो
+          git push origin HEAD:main --force
