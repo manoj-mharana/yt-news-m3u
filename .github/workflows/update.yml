@@ -4,7 +4,7 @@ name: Update M3U Playlist
 
 on:
   schedule:
-    - cron: '0 0,3 * * *' # दिन में दो बार
+    - cron: '0 0,12 * * *' # दिन में दो बार
   workflow_dispatch:
 
 jobs:
@@ -34,15 +34,16 @@ jobs:
       - name: Run script to update playlist
         run: python update.py
         
+      # === यहाँ बदलाव किया गया है ===
       - name: Commit and push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git pull
           git add news.m3u
           # केवल तभी कमिट करें जब कोई बदलाव हो
           if ! git diff --staged --quiet; then
             git commit -m "chore: auto-update playlist"
+            git pull --rebase
             git push
           else
             echo "No changes to commit."
