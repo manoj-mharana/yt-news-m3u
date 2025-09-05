@@ -3,7 +3,7 @@ name: Update YouTube Live M3U
 on:
   schedule:
     - cron: '0 */3 * * *'  # every 3 hours (UTC)
-  workflow_dispatch:       # allow manual run
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,27 +27,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install yt-dlp
 
-      # NEW STEP: write the cookies secret to a file (do NOT echo the value)
       - name: Write YouTube cookies file
         env:
           YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
         run: |
           printf '%s' "$YT_COOKIES" > youtube_cookies.txt
-          # Check file exists (do NOT print contents)
+          # do NOT print cookie contents
           ls -lh youtube_cookies.txt
 
       - name: Generate playlist
         run: |
           python update.py
 
-      - name: Commit and push if changed
+      - name: Commit and push news.m3u only (safe)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [[ `git status --porcelain` ]]; then
-            git add -A
-            git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')"
-            git push
-          else
+          # ensure cookie file never committed
+          git rm -f --ignore-unmatch youtube_cookies.txt || true
+          # add only the playlist file
+          git add news.m3u
+          # if there is no change staged, exit quietly
+          if git diff --cached --quiet; then
             echo "No changes to commit"
+            exit 0
           fi
+          git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')"
+          # integrate remote changes (if any) and push safely
+          git pull --rebase origin main || true
+          git push --force-with-lease origin HEAD:main
