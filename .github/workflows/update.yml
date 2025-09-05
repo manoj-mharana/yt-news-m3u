@@ -11,7 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # यह सेक्शन जोड़ें ताकि एक्शन को कोड लिखने की अनुमति मिले
     permissions:
       contents: write
 
@@ -34,9 +33,17 @@ jobs:
 
       - name: Run script to update playlist
         run: python update.py
-
+        
       - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'chore: auto-update playlist'
-          file_pattern: 'news.m3u'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git pull
+          git add news.m3u
+          # केवल तभी कमिट करें जब कोई बदलाव हो
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update playlist"
+            git push
+          else
+            echo "No changes to commit."
+          fi
