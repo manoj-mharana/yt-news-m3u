@@ -4,8 +4,8 @@ name: Update M3U Playlist
 
 on:
   schedule:
-    # हर 6 घंटे में चलेगा। चेतावनी: यह फ्री API कोटे से ज़्यादा है।
-    - cron: '0 */6 * * *'
+    # हर 12 घंटे में चलेगा। चेतावनी: यह फ्री API कोटे से ज़्यादा है।
+    - cron: '0 0,12 * * *'
   workflow_dispatch:
 
 jobs:
