@@ -1,57 +1,54 @@
-name: Update YouTube Live M3U
+import csv
+import datetime
+import yt_dlp
 
-on:
-  schedule:
-    - cron: '0 */3 * * *'  # हर 3 घंटे में auto run (UTC time)
-  workflow_dispatch:        # Manual run option
+CSV_FILE = "channels.csv"
+M3U_FILE = "news.m3u"
+COOKIE_FILE = "youtube_cookies.txt"
 
-permissions:
-  contents: write
+def make_m3u():
+    lines = []
+    lines.append("#EXTM3U")
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    with open(CSV_FILE, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            name = row["name"].strip()
+            url = row["url"].strip()
+            logo = row.get("logo", "").strip() if "logo" in row else ""
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+            if not url:
+                continue
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install yt-dlp
+            try:
+                ydl_opts = {
+                    "quiet": True,
+                    "no_warnings": True,
+                    "cookies": COOKIE_FILE,
+                    "skip_download": True,
+                    "format": "best[ext=mp4][protocol^=http]/best",
+                }
 
-      - name: Write YouTube cookies file
-        env:
-          YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
-        run: |
-          printf '%s' "$YT_COOKIES" > youtube_cookies.txt
-          # सिर्फ size check, content कभी print नहीं करना
-          ls -lh youtube_cookies.txt
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                    if "url" in info:
+                        stream_url = info["url"]
+                        if logo:
+                            lines.append(f'#EXTINF:-1 tvg-logo="{logo}",{name}')
+                        else:
+                            lines.append(f"#EXTINF:-1,{name}")
+                        lines.append(stream_url)
+                        print(f"[ok] {name}")
+                    else:
+                        print(f"[err] {name}: No stream URL found")
 
-      - name: Generate playlist
-        run: |
-          python update.py
+            except Exception as e:
+                print(f"[err] {name}: {e}")
 
-      - name: Commit and push news.m3u only (safe overwrite)
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # ensure cookie file कभी commit न हो
-          git rm -f --ignore-unmatch youtube_cookies.txt || true
-          # सिर्फ playlist file stage करो
-          git add -f news.m3u
-          # अगर कोई change नहीं है तो exit
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')"
-          # force push ताकि conflict ना हो
-          git push origin HEAD:main --force
+    lines.append(f'# Generated UTC: {datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")}')
+
+    with open(M3U_FILE, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
+if __name__ == "__main__":
+    make_m3u()
