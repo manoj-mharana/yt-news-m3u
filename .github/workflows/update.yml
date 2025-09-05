@@ -1,41 +1,47 @@
-name: Update YouTube Live M3U
+# .github/workflows/main.yml
+
+name: Update M3U Playlist
 
 on:
   schedule:
-    - cron: "0 */3 * * *"   # हर 3 घंटे पर run होगा
-  workflow_dispatch:        # मैन्युअली चलाने का option
+    # हर 6 घंटे में एक बार चलाएं
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      # स्टेप 1: अपनी रिपॉजिटरी का कोड डाउनलोड करें
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      # स्टेप 2: Python का एनवायरनमेंट सेट करें
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
-    - name: Install yt-dlp
-      run: |
-        python -m pip install --upgrade pip
-        pip install yt-dlp
+      # स्टेप 3: Python की ज़रूरी लाइब्रेरी (yt-dlp) इंस्टॉल करें
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yt-dlp
 
-    - name: Save cookies
-      run: printf '%s' "$YOUTUBE_COOKIES" > youtube_cookies.txt
-      env:
-        YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+      # स्टेप 4: GitHub Secret से कुकी फ़ाइल बनाएं
+      - name: Create cookie file
+        run: printf '%s' "${{ secrets.YOUTUBE_COOKIES }}" > youtube_cookies.txt
+        # सुनिश्चित करें कि आपने GitHub Repository Settings > Secrets and variables > Actions में
+        # YOUTUBE_COOKIES नाम का एक Secret बनाया है।
 
-    - name: Run script
-      run: python update.py
+      # स्टेप 5: अपनी Python स्क्रिप्ट चलाएं để news.m3u फ़ाइल जेनरेट करें
+      - name: Run script to update playlist
+        run: python update.py
 
-    - name: Commit and push changes
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git pull --rebase
-        git add news.m3u
-        git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-        git push
+      # स्टेप 6: बदली हुई news.m3u फ़ाइल को ऑटोमैटिक कमिट और पुश करें
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: auto-update playlist'
+          file_pattern: 'news.m3u' # केवल news.m3u फ़ाइल को ही कमिट करें
