@@ -12,6 +12,8 @@ ydl_opts = {
     'skip_download': True,
     'noplaylist': True,
     'nocheckcertificate': True,
+    # tell yt-dlp to use cookies file (we'll create this file in the workflow)
+    'cookiefile': 'youtube_cookies.txt',
 }
 
 def pick_best_m3u8(formats):
@@ -84,3 +86,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
