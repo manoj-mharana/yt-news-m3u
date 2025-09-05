@@ -2,56 +2,40 @@ name: Update YouTube Live M3U
 
 on:
   schedule:
-    - cron: '0 */3 * * *'  # हर 3 घंटे में auto run (UTC time)
-  workflow_dispatch:        # Manual run option
-
-permissions:
-  contents: write
+    - cron: "0 */3 * * *"   # हर 3 घंटे पर run होगा
+  workflow_dispatch:        # मैन्युअली चलाने का option
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install yt-dlp
+    - name: Install yt-dlp
+      run: |
+        python -m pip install --upgrade pip
+        pip install yt-dlp
 
-      - name: Write YouTube cookies file
-        env:
-          YT_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
-        run: |
-          printf '%s' "$YT_COOKIES" > youtube_cookies.txt
-          # सिर्फ size check, content कभी print नहीं करना
-          ls -lh youtube_cookies.txt
+    - name: Save cookies
+      run: printf '%s' "$YT_COOKIES" > youtube_cookies.txt
+      env:
+        YT_COOKIES: ${{ secrets.YT_COOKIES }}
 
-      - name: Generate playlist
-        run: |
-          python update.py
+    - name: Run script
+      run: python update.py
 
-      - name: Commit and push news.m3u only (safe overwrite)
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # ensure cookie file कभी commit न हो
-          git rm -f --ignore-unmatch youtube_cookies.txt || true
-          # सिर्फ playlist file stage करो
-          git add -f news.m3u
-          # अगर कोई change नहीं है तो exit
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')"
-          # force push ताकि conflict ना हो
-          git push origin HEAD:main --force
+    - name: Commit and push changes
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git pull --rebase
+        git add news.m3u
+        git commit -m "Auto-update news.m3u $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+        git push
