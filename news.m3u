@@ -1,3 +1,5 @@
 #EXTM3U
 
-# Generated UTC: 2025-09-16 18:15:42
+# Generated UTC: 2025-09-17 00:49:53
+#EXTINF:-1 group-title="Hindi News",First India News
+https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1758091807/ei/vwXKaPnRJOW1kucPrLrQqAo/ip/20.109.38.226/id/DxuCMa2T_1M.1/itag/301/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgoap/gir%3Dyes%3Bitag%3D140/sgovp/gir%3Dyes%3Bitag%3D299/rqh/1/hls_chunk_host/rr3---sn-p5qlsn6s.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/bui/ATw7iSXfU33Et3uTIbuWhD7NTwfgjwD4WLqQ0odqq0KIElrqWlCYCSr10pXSDfZvqibEYqGUS3f7oF2x/spc/hcYD5cyxvQb928sV5bpTF2YBWZMUQ8etJFtk-PtfKowk7mFLQLYDlOeCTa8_QZXw1Nc/vprv/1/playlist_type/DVR/met/1758070208,/mh/_f/mm/44/mn/sn-p5qlsn6s/ms/lva/mv/u/mvi/3/pl/19/rms/lva,lva/dover/11/pacing/0/keepalive/yes/fexp/51355912,51552689,51565116,51565682,51580968/mt/1758068861/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgoap,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,playlist_type/sig/AJfQdSswRgIhAIb-wl-hTCSvFWEdysmNLEVXBT4rvFMsHZy3NkA1HGRUAiEA-zZ7pf5X1rc_6fcgHjUi1bvNRvW5eLltDj5py12FxWE%3D/lsparams/hls_chunk_host,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIgcVcOM2zVkfaMSI1__rA3gCpa0qN1ZjvTPY8N_Z3hSe0CIQCfohNyKxHxoSytkpxnM7Vik8PbAxXaN6304K1Oww1acw%3D%3D/playlist/index.m3u8
