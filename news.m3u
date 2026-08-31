@@ -1,3 +1,5 @@
 #EXTM3U
 
-# Generated UTC: 2026-08-30 20:16:23
+# Generated UTC: 2026-08-31 02:17:14
+#EXTINF:-1 group-title="Hindi News",DD News
+https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1788164257/ei/QOSUarGuO43U-coPxsCmuQw/ip/20.106.23.80/id/qD6GkaU2lD0.1/itag/270/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgovp/gir%3Dyes%3Bitag%3D137/rqh/1/hls_chunk_host/rr5---sn-vgqsrnld.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/30/manifest_duration/30/bui/AR3QkAnu_obBiTBFb6rq6d5vdYlIoaMX0EJh4zjJORTTK6Clg1ffSccQ10fMEGmH7q3ice6tu8XcIk7V/spc/KBGBcj-Vpi-QyT9Otoj8Zh8mlM3d4J1gFE-U3k41AqIxMmCT7qqgt043XA/vprv/1/reg/0/playlist_type/DVR/met/1788142657,/mh/Ii/mm/44/mn/sn-vgqsrnld/ms/lva/mv/u/mvi/5/pl/16/rms/lva,lva/dover/13/pacing/0/short_key/1/keepalive/yes/fexp/51565116,52135441/mt/1788142358/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,reg,playlist_type/sig/AE0s2JYwRgIhALbT65D2re8tVnnFb9UnqzqVFZv_UR8i7fsHFioQoT1LAiEAr7qEh2zJxDa7h08X4dFtBefs35_ImM6fgMKyiRq-u40%3D/lsparams/hls_chunk_host,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIgTscqTTGswEhSKtFntSJVrRtW70_E8JSJ7YSMhSfEEdgCIQCrR3T3mGOPMubGHxyCuou-re9mRKjNi0CD0x0Z36-FCA%3D%3D/playlist/index.m3u8
