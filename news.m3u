@@ -1,3 +1,5 @@
 #EXTM3U
 
-# Generated UTC: 2026-09-27 20:35:01
+# Generated UTC: 2026-09-28 02:32:02
+#EXTINF:-1 group-title="Hindi News",News18 Rajasthan
+https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/1790584334/ei/rtG5aq2wH47cybgPrfDRiAo/ip/52.161.75.160/id/JRvfKLDqjHs.1/itag/270/source/yt_live_broadcast/requiressl/yes/ratebypass/yes/live/1/sgovp/gir%3Dyes%3Bitag%3D137/rqh/1/hls_chunk_host/rr17---sn-ojn4v5-5w.googlevideo.com/xpc/EgVo2aDSNQ%3D%3D/playlist_duration/3600/manifest_duration/3600/bui/AWzQHwrvWmr7YDt97Jecjs-60571kD-alnZ68Yf9VflS_JDZjx-Wl2NzVRfmyiEInm--QI5dLPgs2FI2/spc/I-rgIfH74bbSRoSi4uMIgIt8LRYHGucX4CfDk2NRyY65ADXlZ8ncgczQzg/vprv/1/reg/0/playlist_type/DVR/met/1790562734,/mh/Yq/mm/44/mn/sn-ojn4v5-5w/ms/lva/mv/u/mvi/17/pl/15/rms/lva,lva/dover/13/pacing/0/short_key/1/keepalive/yes/fexp/51565116,52112904,52178456/mt/1790562410/sparams/expire,ei,ip,id,itag,source,requiressl,ratebypass,live,sgovp,rqh,xpc,playlist_duration,manifest_duration,bui,spc,vprv,reg,playlist_type/sig/AE0s2JYwRAIgfSkZxv2S7Oc8l3-GF7i7arLqhXiPzdNgSKiiib-cCwcCIEGZg6i4_YKRVFAj_vCb5QPkg4OHT79_zffVNTI8Ug_B/lsparams/hls_chunk_host,met,mh,mm,mn,ms,mv,mvi,pl,rms/lsig/APaTxxMwRQIgf5uhw20ror5iHiv1dQEHv1zgrlpNjwrJQpDS1NtaiQUCIQCjXQulkAcG74U4bkX4xyQUKFnKyCYvjwkvuTHigHKttw%3D%3D/playlist/index.m3u8
